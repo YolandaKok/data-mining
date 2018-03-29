@@ -21,34 +21,25 @@ A = np.array(politics)
 #print type(stra)
 stop_words = stopwords.words('english')
 stop_words.append("said")
+stop_words.append("say")
 stop_words.append("want")
-
-#filtered_sentence = [w for w in A[0] if not w in stop_words]
+# print stop_words
 
 filtered_sentence = []
 word = []
 
-for w in A[0]:
-    if w != ' ':
-        word.append(w)
-    else:
-        word = ''.join(word)
-        if word not in stop_words:
-            filtered_sentence.append(word)
-        word = []
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          if word not in stop_words:
+              filtered_sentence.append(word)
+          word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
-#print filtered_sentence
 
-#wordcloud = WordCloud().generate(filtered_sentence)
-
-# Display the generated image:
-# the matplotlib way:
-
-#plt.imshow(wordcloud, interpolation='bilinear')
-#plt.axis("off")
-
-# lower max_font_size
 wordcloud = WordCloud(max_font_size=40).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
