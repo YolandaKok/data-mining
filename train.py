@@ -7,23 +7,35 @@ import matplotlib.pyplot as plt
 from os import path
 from wordcloud import WordCloud
 
-nltk.download('stopwords')
-nltk.download('punkt')
+#nltk.download('stopwords')
+#nltk.download('punkt')
+
+
 # Import data from csv
 train_data = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
+
 politics = train_data[train_data['Category'] == 'Politics']
 politics = politics['Content']
-#print type(politics)
 
-A = np.array(politics)
-#print A.shape
+football = train_data[train_data['Category'] == 'Football']
+football = football['Content']
 
-#print type(stra)
+film = train_data[train_data['Category'] == 'Film']
+film = film['Content']
+
+technology = train_data[train_data['Category'] == 'Technology']
+technology = technology['Content']
+
+business = train_data[train_data['Category'] == 'Business']
+business = business['Content']
+
+
 stop_words = stopwords.words('english')
-stop_words.append("said")
-stop_words.append("say")
-stop_words.append("want")
-# print stop_words
+manual_stop_words = ['said', 'say', 'want', 'one', 'know', 'two', 'see', 'something']
+
+
+#make the content of the politics and make it into a text
+A = np.array(politics)
 
 filtered_sentence = []
 word = []
@@ -34,14 +46,111 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words:
+          if word not in stop_words and word not in manual_stop_words:
               filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
 
-wordcloud = WordCloud(max_font_size=40).generate(filtered_sentence)
+wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
+plt.title("Politics")
+
+#films
+A = np.array(film)
+
+filtered_sentence = []
+word = []
+
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          if word not in stop_words and word not in manual_stop_words:
+              filtered_sentence.append(word)
+          word = []
+
+filtered_sentence = ' '.join(filtered_sentence)
+
+wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title("Film")
+
+#football
+A = np.array(football)
+
+filtered_sentence = []
+word = []
+
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          if word not in stop_words and word not in manual_stop_words:
+              filtered_sentence.append(word)
+          word = []
+
+filtered_sentence = ' '.join(filtered_sentence)
+
+wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title("Football")
+
+#technology
+A = np.array(technology)
+
+filtered_sentence = []
+word = []
+
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          if word not in stop_words and word not in manual_stop_words:
+              filtered_sentence.append(word)
+          word = []
+
+filtered_sentence = ' '.join(filtered_sentence)
+
+wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title("Technology")
+
+#business
+A = np.array(politics)
+
+filtered_sentence = []
+word = []
+
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          if word not in stop_words and word not in manual_stop_words:
+              filtered_sentence.append(word)
+          word = []
+
+filtered_sentence = ' '.join(filtered_sentence)
+
+wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title("Business")
 plt.show()
