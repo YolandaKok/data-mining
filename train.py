@@ -31,7 +31,8 @@ business = business['Content']
 
 
 stop_words = stopwords.words('english')
-manual_stop_words = ['said', 'say', 'want', 'one', 'know', 'two', 'see', 'something']
+manual_stop_words = ["said", "say", "want", "one", "know", "two", 
+                     "see", "something", "also", "says", "get"]
 
 
 #make the content of the politics and make it into a text
@@ -46,13 +47,12 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words and word not in manual_stop_words:
-              filtered_sentence.append(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
-
-wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
@@ -70,13 +70,12 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words and word not in manual_stop_words:
-              filtered_sentence.append(word)
+          filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
 
-wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
@@ -94,13 +93,12 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words and word not in manual_stop_words:
-              filtered_sentence.append(word)
+          filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
 
-wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
@@ -118,13 +116,12 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words and word not in manual_stop_words:
-              filtered_sentence.append(word)
+          filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
 
-wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
@@ -142,13 +139,12 @@ for i in range(A.shape[0]):
           word.append(w)
       else:
           word = ''.join(word)
-          if word not in stop_words and word not in manual_stop_words:
-              filtered_sentence.append(word)
+          filtered_sentence.append(word)
           word = []
 
 filtered_sentence = ' '.join(filtered_sentence)
 
-wordcloud = WordCloud(max_font_size=50).generate(filtered_sentence)
+wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
 plt.figure()
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
