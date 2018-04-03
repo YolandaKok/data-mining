@@ -17,9 +17,10 @@ from nltk import PorterStemmer
 
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('test_set.csv', sep="\t", encoding = 'utf8')
+train_set = train_set[0:100]
 
 train_content = train_set['Content']
-print train_content.shape
+
 # Preprocess
 # Stemming
 sentences = []
@@ -33,11 +34,7 @@ for sentence in train_content:
 
 # Label Encoding for the categories
 le = preprocessing.LabelEncoder()
-y_train = le.fit_transform(train_set["Category"])
-
-# Keep only the content from the train_set
-# Vectorize
-#count_vectorizer = CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2500)
+y_train = le.fit_transform(train_set['Category'])
 
 # Use a pipeline
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
@@ -51,17 +48,8 @@ pipeline = Pipeline([
 ])
 
 predicted = pipeline.fit(sentences, y_train)
+
 # Now evaluate all steps on test set and predict
 predicted = pipeline.predict(test_set['Content'])
 
-#X = count_vectorizer.fit_transform(sentences)
-
-#Y = count_vectorizer.fit_transform(test_set['Content'])
-
-# Classification algorithm
-#clf = RandomForestClassifier()
-#clf.fit(X, y_train)
-#y_pred = clf.predict(Y)
-
 predicted_categories = le.inverse_transform(predicted)
-print zip(test_set['Id'], predicted_categories)

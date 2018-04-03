@@ -53,10 +53,7 @@ for i in range(A.shape[0]):
 
 filtered_sentence = ' '.join(filtered_sentence)
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Politics")
+plt.imsave("./images/politics.png", wordcloud)
 
 #films
 A = np.array(film)
@@ -76,10 +73,7 @@ for i in range(A.shape[0]):
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Film")
+plt.imsave("./images/film.png", wordcloud)
 
 #football
 A = np.array(football)
@@ -99,10 +93,7 @@ for i in range(A.shape[0]):
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Football")
+plt.imsave("./images/football.png", wordcloud)
 
 #technology
 A = np.array(technology)
@@ -122,10 +113,7 @@ for i in range(A.shape[0]):
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Technology")
+plt.imsave("./images/technology.png", wordcloud)
 
 #business
 A = np.array(politics)
@@ -145,8 +133,4 @@ for i in range(A.shape[0]):
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Business")
-plt.show()
+plt.imsave("./images/bussiness.png", wordcloud)
