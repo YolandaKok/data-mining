@@ -11,38 +11,49 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.preprocessing import scale
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
+from sklearn.metrics import accuracy_score
 import nltk
 from nltk import PorterStemmer
 
+# Preprocess Data
+# Stemming
+def preprocess(content):
+    # Preprocess
+    # Stemming
+    sentences = []
+    sent = []
+    for sentence in content:
+        for word in nltk.word_tokenize(sentence):
+            sent.append(PorterStemmer().stem(word))
+        sent = ' '.join(sent)
+        sentences.append(sent)
+        sent = []
+    return sentences
+
+# Write results to csv
+def write_to_csv(predictions):
+    # Transform list of tuples to a dataframe
+    df = pd.DataFrame(predictions, columns=['ID', 'Predicted_Category'])
+    # Do not include index column
+    df.to_csv("testSet_categories.csv", sep="\t", index=False)
+
+# Main Program
 
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('test_set.csv', sep="\t", encoding = 'utf8')
 
 train_content = train_set['Content']
-print train_content.shape
-# Preprocess
-# Stemming
-sentences = []
-sent = []
-for sentence in train_content:
-    for word in nltk.word_tokenize(sentence):
-        sent.append(PorterStemmer().stem(word))
-    sent = ' '.join(sent)
-    sentences.append(sent)
-    sent = []
+
+# Preprocess data
+sentences = preprocess(train_content)
 
 # Label Encoding for the categories
 le = preprocessing.LabelEncoder()
 y_train = le.fit_transform(train_set["Category"])
 
-# Keep only the content from the train_set
-# Vectorize
-#count_vectorizer = CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2500)
-
 # Use a pipeline
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
 # Predictor - some class that has fit and predict methods, or fit_predict method.
-
 pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
     ('tfidf', TfidfTransformer()),
@@ -53,15 +64,10 @@ pipeline = Pipeline([
 predicted = pipeline.fit(sentences, y_train)
 # Now evaluate all steps on test set and predict
 predicted = pipeline.predict(test_set['Content'])
-
-#X = count_vectorizer.fit_transform(sentences)
-
-#Y = count_vectorizer.fit_transform(test_set['Content'])
-
-# Classification algorithm
-#clf = RandomForestClassifier()
-#clf.fit(X, y_train)
-#y_pred = clf.predict(Y)
-
 predicted_categories = le.inverse_transform(predicted)
-print zip(test_set['Id'], predicted_categories)
+predictions = zip(test_set['Id'], predicted_categories)
+# write to csv
+write_to_csv(predictions)
+
+# Print Accuracy score
+#print accuracy_score(y_train, predicted_categories)
