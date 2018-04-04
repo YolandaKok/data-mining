@@ -14,6 +14,8 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import accuracy_score
 import nltk
 from nltk import PorterStemmer
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
 
 # Preprocess Data
 # Stemming
@@ -55,9 +57,9 @@ y_train = le.fit_transform(train_set["Category"])
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
 # Predictor - some class that has fit and predict methods, or fit_predict method.
 pipeline = Pipeline([
-    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
+    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 1000)),
+    ('svd', TruncatedSVD(n_components = 250)),
     ('clf', RandomForestClassifier()),
 ])
 
@@ -70,4 +72,4 @@ predictions = zip(test_set['Id'], predicted_categories)
 write_to_csv(predictions)
 
 # Print Accuracy score
-#print accuracy_score(y_train, predicted_categories)
+#print accuracy_score(y_train, predicted)
