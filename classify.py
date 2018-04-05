@@ -16,6 +16,7 @@ import nltk
 from nltk import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
+from sklearn.metrics import accuracy_score
 
 # Preprocess Data
 # Stemming
@@ -40,7 +41,6 @@ def write_to_csv(predictions):
     df.to_csv("testSet_categories.csv", sep="\t", index=False)
 
 # Main Program
-
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('test_set.csv', sep="\t", encoding = 'utf8')
 
@@ -70,6 +70,3 @@ predicted_categories = le.inverse_transform(predicted)
 predictions = zip(test_set['Id'], predicted_categories)
 # write to csv
 write_to_csv(predictions)
-
-# Print Accuracy score
-#print accuracy_score(y_train, predicted)
