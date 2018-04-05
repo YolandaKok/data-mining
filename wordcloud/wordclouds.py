@@ -12,7 +12,7 @@ from wordcloud import WordCloud
 
 
 # Import data from csv
-train_data = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
+train_data = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 
 politics_data = train_data[train_data['Category'] == 'Politics']
 politics = politics_data['Content']
