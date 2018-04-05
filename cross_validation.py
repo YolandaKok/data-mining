@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.preprocessing import scale
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score
 import nltk
 from nltk import PorterStemmer
 from sklearn.model_selection import train_test_split
@@ -24,7 +24,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif
 clf =  RandomForestClassifier()
 
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:100]
+train_set = train_set[0:500]
 train_set_content = train_set['Content']
 train_set_categories = train_set['Category']
 
@@ -50,5 +50,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     clf.fit(features_train_transformed, categories_train)
     prediction = clf.predict(features_test_transformed)
     acc = accuracy_score(prediction, categories_test)
-
-    print acc
+    print prediction
+    print categories_test
+    precision = precision_score(prediction, categories_test, average=None)
+    print acc, precision
