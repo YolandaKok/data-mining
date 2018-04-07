@@ -1,7 +1,5 @@
 import pandas as pd
-
 import numpy as np
-
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction import text
@@ -15,7 +13,6 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import accuracy_score
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
-
 import nltk
 from nltk import PorterStemmer
 
@@ -48,8 +45,6 @@ def write_to_csv(predictions):
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:100]
-test_set = test_set[0:100]
 
 train_content = train_set['Content']
 
@@ -65,34 +60,37 @@ y_train = le.fit_transform(train_set["Category"])
 # Predictor - some class that has fit and predict methods, or fit_predict method.
 svc = svm.SVC()
 
-pipeline = Pipeline([
-    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
-    ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 100)),
-    ('clf', svm.SVC()),
-])
-
-"""
 #make a pipeline with cridsvc changing the directories
-parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
+"""
+parameters = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
+               'gamma': [0.0001, 0.001, 0.01, 0.1],
+               'kernel':['linear','rbf'] }
+"""
+
+parameters = {'C': [100],
+              'gamma': [0.0001],
+              'kernel':['linear','rbf'] }
+
 
 pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
     ('tfidf', TfidfTransformer()),
     ('svd', TruncatedSVD(n_components = 1000)),
-    ('clf', GridSearchCV(svc, parameters)),
+   ('clf', GridSearchCV(svc, parameters)),
 ])
 
-sorted(clf.cv_results_.keys())
-"""
+#vect = CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)
+#c = vect.fit_transform(sentences)
+#clf = GridSearchCV(svc, parameters)
+#predicted = clf.fit(c,y_train)
+#print predicted.best_estimator_
+
 
 predicted = pipeline.fit(sentences, y_train)
 # Now evaluate all steps on test set and predict
 predicted = pipeline.predict(test_set['Content'])
 predicted_categories = le.inverse_transform(predicted)
 predictions = zip(test_set['Id'], predicted_categories)
+
 # write to csv
 write_to_csv(predictions)
-
-# Print Accuracy score
-#print accuracy_score(y_train, predicted_categories)
