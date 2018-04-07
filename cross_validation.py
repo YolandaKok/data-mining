@@ -18,15 +18,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
+from sklearn.naive_bayes import GaussianNB
 
 # Main Program
 # Classifier
 clf =  RandomForestClassifier()
 
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:500]
+#train_set = train_set[0:500]
 train_set_content = train_set['Content']
 train_set_categories = train_set['Category']
+
+# Accuracy mean value
+mean_random_forest_accuracy = 0.0
 
 kf = KFold(n_splits=10)
 for train_indexes, test_indexes in kf.split(train_set):
@@ -50,7 +54,12 @@ for train_indexes, test_indexes in kf.split(train_set):
     clf.fit(features_train_transformed, categories_train)
     prediction = clf.predict(features_test_transformed)
     acc = accuracy_score(prediction, categories_test)
-    print prediction
-    print categories_test
+    #print prediction
+    #print categories_test
     precision = precision_score(prediction, categories_test, average=None)
-    print acc, precision
+    #print acc, precision
+    mean_random_forest_accuracy += acc
+
+mean_random_forest_accuracy /= 10
+
+print "Random Forest Mean Accuracy: ", mean_random_forest_accuracy
