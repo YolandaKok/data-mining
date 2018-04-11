@@ -12,27 +12,30 @@ from wordcloud import WordCloud
 
 
 # Import data from csv
-train_data = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
+train_data = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 
-politics = train_data[train_data['Category'] == 'Politics']
-politics = politics['Content']
+politics_data = train_data[train_data['Category'] == 'Politics']
+politics = politics_data['Content']
+pt = politics_data['Title']
 
-football = train_data[train_data['Category'] == 'Football']
-football = football['Content']
+football_data = train_data[train_data['Category'] == 'Football']
+football = football_data['Content']
+fot = football_data['Title']
 
-film = train_data[train_data['Category'] == 'Film']
-film = film['Content']
+film_data = train_data[train_data['Category'] == 'Film']
+film = film_data['Content']
+ft = film_data['Title']
 
-technology = train_data[train_data['Category'] == 'Technology']
-technology = technology['Content']
+technology_data = train_data[train_data['Category'] == 'Technology']
+technology = technology_data['Content']
+tt = technology_data['Title']
 
-business = train_data[train_data['Category'] == 'Business']
-business = business['Content']
-
+business_data = train_data[train_data['Category'] == 'Business']
+business = business_data['Content']
+bt = business_data['Title']
 
 stop_words = stopwords.words('english')
-manual_stop_words = ["said", "say", "want", "one", "know", "two", 
-                     "see", "something", "also", "says", "get"]
+manual_stop_words = ["said", "say", "want", "one", "know", "two", "see", "something", "also", "says", "get"]
 
 
 #make the content of the politics and make it into a text
@@ -51,12 +54,20 @@ for i in range(A.shape[0]):
           filtered_sentence.append(word)
           word = []
 
+A = np.array(pt)
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
+          word = []
+
 filtered_sentence = ' '.join(filtered_sentence)
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Politics")
+plt.imsave("./images/politics.png", wordcloud)
 
 #films
 A = np.array(film)
@@ -73,13 +84,21 @@ for i in range(A.shape[0]):
           filtered_sentence.append(word)
           word = []
 
+A = np.array(ft)
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
+          word = []
+
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Film")
+plt.imsave("./images/film.png", wordcloud)
 
 #football
 A = np.array(football)
@@ -96,13 +115,21 @@ for i in range(A.shape[0]):
           filtered_sentence.append(word)
           word = []
 
+A = np.array(fot)
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
+          word = []
+
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Football")
+plt.imsave("./images/football.png", wordcloud)
 
 #technology
 A = np.array(technology)
@@ -119,13 +146,21 @@ for i in range(A.shape[0]):
           filtered_sentence.append(word)
           word = []
 
+A = np.array(tt)
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
+          word = []
+
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Technology")
+plt.imsave("./images/technology.png", wordcloud)
 
 #business
 A = np.array(politics)
@@ -142,11 +177,18 @@ for i in range(A.shape[0]):
           filtered_sentence.append(word)
           word = []
 
+A = np.array(bt)
+for i in range(A.shape[0]):
+  for w in A[i]:
+      if w != ' ':
+          word.append(w)
+      else:
+          word = ''.join(word)
+          #if word not in stop_words and word not in manual_stop_words:
+          filtered_sentence.append(word)
+          word = []
+
 filtered_sentence = ' '.join(filtered_sentence)
 
 wordcloud = WordCloud(stopwords=stop_words + manual_stop_words).generate(filtered_sentence)
-plt.figure()
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.title("Business")
-plt.show()
+plt.imsave("./images/bussiness.png", wordcloud)
