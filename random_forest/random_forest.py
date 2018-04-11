@@ -14,6 +14,9 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import accuracy_score
 import nltk
 from nltk import PorterStemmer
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
+from sklearn.metrics import accuracy_score
 
 # Preprocess Data
 # Stemming
@@ -38,10 +41,8 @@ def write_to_csv(predictions):
     df.to_csv("testSet_categories.csv", sep="\t", index=False)
 
 # Main Program
-
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
-
 train_content = train_set['Content']
 
 # Preprocess data
@@ -55,9 +56,9 @@ y_train = le.fit_transform(train_set["Category"])
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
 # Predictor - some class that has fit and predict methods, or fit_predict method.
 pipeline = Pipeline([
-    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
+    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 1000)),
+    ('svd', TruncatedSVD(n_components = 250)),
     ('clf', RandomForestClassifier()),
 ])
 
@@ -68,6 +69,3 @@ predicted_categories = le.inverse_transform(predicted)
 predictions = zip(test_set['Id'], predicted_categories)
 # write to csv
 write_to_csv(predictions)
-
-# Print Accuracy score
-#print accuracy_score(y_train, predicted_categories)
