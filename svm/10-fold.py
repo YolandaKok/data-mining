@@ -25,8 +25,8 @@ from sklearn.feature_selection import SelectPercentile, f_classif
 svc = svm.SVC()
 
 #https://stackoverflow.com/questions/46330329/finding-the-values-of-c-and-gamma-to-optimise-svm
-#You are looking for Hyper-Parameter tuning. In parameter tuning we pass a dictionary containing 
-#a list of possible values for you classifier, then depending on the method that 
+#You are looking for Hyper-Parameter tuning. In parameter tuning we pass a dictionary containing
+#a list of possible values for you classifier, then depending on the method that
 #you choose (i.e. GridSearchCV, RandomSearch, etc.) the best possible parameters are returned.
 parameters = {'C': [100],
                'gamma': [0.0001],
@@ -38,7 +38,7 @@ train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')*
 train_set_content = train_set['Content']
 train_set_categories = train_set['Category']
 
-kf = KFold(n_splits=5)
+kf = KFold(n_splits=10)
 for train_indexes, test_indexes in kf.split(train_set):
     #print("TRAIN:", train_indexes, "TEST:", test_indexes)
     features_train = [train_set_content[i] for i in train_indexes]

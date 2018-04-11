@@ -65,7 +65,6 @@ y_train = le.fit_transform(train_set["Category"])
 pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
     ('tfidf', TfidfTransformer()),
-    
     ('clf', MultinomialNB(alpha=0.01)),
 ])
 
