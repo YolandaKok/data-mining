@@ -19,31 +19,22 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
+from sklearn.ensemble import RandomForestClassifier
 
 import matplotlib.pyplot as plt
 
 def kfold_acc(n_components):
     # Main Program
     # Classifier
-    svc = svm.SVC()
+    clf = RandomForestClassifier()
 
-    #https://stackoverflow.com/questions/46330329/finding-the-values-of-c-and-gamma-to-optimise-svm
-    #You are looking for Hyper-Parameter tuning. In parameter tuning we pass a dictionary containing
-    #a list of possible values for you classifier, then depending on the method that
-    #you choose (i.e. GridSearchCV, RandomSearch, etc.) the best possible parameters are returned.
-    parameters = {'C': [100],
-                'gamma': [0.0001],
-                'kernel':['linear','rbf'] }
-
-    clf =  GridSearchCV(svc, parameters)
-
-    train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')*
+    train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
     train_set_content = train_set['Content']
     train_set_categories = train_set['Category']
 
     kf = KFold(n_splits=10)
     for train_indexes, test_indexes in kf.split(train_set):
-        #print("TRAIN:", train_indexes, "TEST:", test_indexes)
+
         features_train = [train_set_content[i] for i in train_indexes]
         features_test = [train_set_content[i] for i in test_indexes]
         categories_train = [train_set_categories[i] for i in train_indexes]
@@ -53,30 +44,33 @@ def kfold_acc(n_components):
         vectorizer = TfidfVectorizer(stop_words='english')
         features_train_transformed = vectorizer.fit_transform(features_train)
         features_test_transformed = vectorizer.transform(features_test)
+
         svd = TruncatedSVD(n_components)
-        features = svd.fit_transform(features_test)
+        features_train_transformed = svd.fit_transform(features_train_transformed)
+        features_test_transformed = svd.transform(features_test_transformed)
 
         # Select only ten from it
         selector = SelectPercentile(f_classif, percentile = 10)
         selector.fit(features_train_transformed, categories_train)
-        features_train_transformed = selector.transform(features_train_transformed).toarray()
+        features_train_transformed = selector.transform(features_train_transformed)
 
         #print features_train_transformed
-        features_test_transformed = selector.transform(features_test_transformed).toarray()
+        features_test_transformed = selector.transform(features_test_transformed)
 
         #print features_test_transformed
         clf.fit(features_train_transformed, categories_train)
         prediction = clf.predict(features_test_transformed)
         acc = accuracy_score(prediction, categories_test)
 
-        return acc
+    print acc
+    return acc
 
 acc = []
-n_components = [10, 50, 100, 150, 100, 500, 1000]
+n_components = [10, 20, 50, 100, 150, 200, 500, 600]
 
 for i in n_components:
     acc.append(kfold_acc(i))
 
 plt.plot(n_components, acc)
-plt.axis([0, 1000, 0 , 1])
-plt.show()
+plt.axis([0, 600, 0 , 1])
+plt.savefig('foo.png')
