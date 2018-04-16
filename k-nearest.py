@@ -10,6 +10,12 @@ import math
 from pandas import DataFrame
 from sklearn import preprocessing
 
+def write_to_csv(predictions):
+    # Transform list of tuples to a dataframe
+    df = pd.DataFrame(predictions, columns=['ID', 'Predicted_Category'])
+    # Do not include index column
+    df.to_csv("testSet_categories.csv", sep="\t", index=False)
+
 # Euclidean Distance
 def euclidean_distance(vector1, vector2):
     length1 = len(vector1)
@@ -35,13 +41,14 @@ def findNeighbors(trainData, testItem, k, categories, ids):
     for x in trainData:
         distances.append((euclidean_distance(x, testItem), categories[n], ids[n]))
         n += 1
-    distances = sorted(distances,  key=lambda x: x[0], reverse=True)[:k]
+    distances = sorted(distances,  key=lambda x: x[0])[:k]
     return distances
 
 def MajorityVoting(neighbors):
     # Select Neighbors categories
     categories = [0, 0, 0, 0, 0]
     for item in neighbors:
+        print item
         if item[1] == 'Business':
             categories[0] += 1
         elif item[1] == 'Football':
@@ -54,7 +61,6 @@ def MajorityVoting(neighbors):
             categories[4] += 1
 
     category_index = categories.index(max(categories))
-    print category_index
     return category_index
 
 # Read the train_set
@@ -70,20 +76,27 @@ test_content = test_set['Content']
 vectorizer = CountVectorizer(stop_words='english')
 
 # Train content list of lists
-transformed = vectorizer.fit_transform(train_content[:200])
+transformed = vectorizer.fit_transform(train_content[:5000])
+print transformed
 train_set_list = DataFrame(transformed.A).values.astype(int).tolist()
 
 # Test Content list of lists
-transformed_test = vectorizer.fit_transform(test_content[:200])
+transformed_test = vectorizer.fit_transform(test_content[:30])
 test_set_list = DataFrame(transformed_test.A).values.astype(int).tolist()
+
 
 neighbors = []
 categories = ['Business', 'Football', 'Politics', 'Film', 'Technology']
+predictions = []
 for item in test_set_list:
     # Find neighbors for each element
-    neighbors = findNeighbors(train_set_list, item, 3, train_categories, train_id)
+    neighbors = findNeighbors(train_set_list, item, 7, train_categories, train_id)
     # Majority Voting
+
     print MajorityVoting(neighbors)
+    predictions.append(zip())
+    #predictions.append(zip(test_set['Id'], MajorityVoting(neighbors)))
+#write_to_csv(predictions)
 
 
 # Write to csv predicted categories
