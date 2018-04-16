@@ -58,7 +58,7 @@ y_train = le.fit_transform(train_set["Category"])
 pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 250)),
+    ('svd', TruncatedSVD(n_components = 5)),
     ('clf', RandomForestClassifier()),
 ])
 

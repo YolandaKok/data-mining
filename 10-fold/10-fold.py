@@ -49,7 +49,6 @@ svm = GridSearchCV(svc, parameters)
 
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:1000]
 train_set_content = train_set['Content']
 train_set_categories = train_set['Category']
 
@@ -112,6 +111,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     mnb_precision += precision_score(prediction, categories_test, average="macro")
     mnb_recall += recall_score(prediction, categories_test, average="macro")
     mnb_fMeasure += f1_score(prediction, categories_test, average='macro')
+
     #SVM
     svm.fit(features_train_transformed, categories_train)
     prediction = svm.predict(features_test_transformed)
@@ -119,6 +119,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     svm_precision += precision_score(prediction, categories_test, average="macro")
     svm_recall += recall_score(prediction, categories_test, average="macro")
     svm_fMeasure += f1_score(prediction, categories_test, average='macro')
+
 #find the accuracy_score
 rf_acc = rf_acc / 10
 mnb_acc = mnb_acc / 10
