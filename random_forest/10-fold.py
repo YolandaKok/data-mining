@@ -24,7 +24,6 @@ from sklearn.feature_selection import SelectPercentile, f_classif
 clf =  RandomForestClassifier()
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:100]
 train_set_content = train_set['Content']
 train_set_categories = train_set['Category']
 
