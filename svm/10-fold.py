@@ -22,7 +22,7 @@ from sklearn.feature_selection import SelectPercentile, f_classif
 
 import matplotlib.pyplot as plt
 
-df kfold_acc(n_components):
+def kfold_acc(n_components):
     # Main Program
     # Classifier
     svc = svm.SVC()
