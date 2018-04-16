@@ -47,8 +47,6 @@ def write_to_csv(predictions):
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
-train_set = train_set[0:100]
-test_set = test_set[0:100]
 
 train_content = train_set['Content']
 
@@ -73,8 +71,6 @@ predicted = pipeline.fit(sentences, y_train)
 predicted = pipeline.predict(test_set['Content'])
 predicted_categories = le.inverse_transform(predicted)
 predictions = zip(test_set['Id'], predicted_categories)
+
 # write to csv
 write_to_csv(predictions)
-
-# Print Accuracy score
-#print accuracy_score(y_train, predicted_categories)
