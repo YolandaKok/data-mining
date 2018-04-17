@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
 from sklearn.feature_extraction import text
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -9,6 +9,9 @@ from sklearn.preprocessing import Normalizer
 import math
 from pandas import DataFrame
 from sklearn import preprocessing
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import TruncatedSVD
+
 
 def write_to_csv(predictions):
     # Transform list of tuples to a dataframe
@@ -74,17 +77,24 @@ test_content = test_set['Content']
 # Id of the test set
 test_id = test_set['Id']
 
-vectorizer = CountVectorizer(stop_words='english', max_features = 100)
+
+pipeline = Pipeline([
+    ('vec', CountVectorizer(max_features=4096, stop_words='english')),
+    ('transformer', TfidfTransformer()),
+    ('svd', TruncatedSVD(n_components=40))
+])
+
+#vectorizer = CountVectorizer(stop_words='english', max_features = 100)
 
 # Train content list of lists
-transformed = vectorizer.fit_transform(train_content)
+train_set_list = pipeline.fit_transform(train_content)
 #train_set_list = np.array(transformed)
 #print train_set_list
-train_set_list = DataFrame(transformed.A).values.astype(int).tolist()
+#train_set_list = DataFrame(transformed).values.astype(int).tolist()
 # Test Content list of lists
-transformed_test = vectorizer.fit_transform(test_content)
+test_set_list = pipeline.fit_transform(test_content)
 #test_set_list = np.array(transformed_test)
-test_set_list = DataFrame(transformed_test.A).values.astype(int).tolist()
+#test_set_list = DataFrame(transformed_test).values.astype(int).tolist()
 
 
 neighbors = []
