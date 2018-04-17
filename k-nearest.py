@@ -59,29 +59,32 @@ def MajorityVoting(neighbors):
         elif item[1] == 'Technology':
             categories[4] += 1
 
+    print categories
     category_index = categories.index(max(categories))
     return category_index
 
 # Read the train_set
 train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
-train_content = train_set['Content']
+train_content = train_set['Title']
 # Keep the train_set Categories
 train_categories = train_set['Category']
 train_id = train_set['Id']
 # Read the test_set
 test_set = pd.read_csv('test_set.csv', sep="\t", encoding = 'utf8')
-test_content = test_set['Content']
+test_content = test_set['Title']
 # Id of the test set
 test_id = test_set['Id']
 
-vectorizer = CountVectorizer(stop_words='english')
+vectorizer = CountVectorizer(stop_words='english', max_features = 200)
 
 # Train content list of lists
-transformed = vectorizer.fit_transform(train_content[:3000])
+transformed = vectorizer.fit_transform(train_content)
+#train_set_list = np.array(transformed)
+#print train_set_list
 train_set_list = DataFrame(transformed.A).values.astype(int).tolist()
-
 # Test Content list of lists
-transformed_test = vectorizer.fit_transform(test_content[:30])
+transformed_test = vectorizer.fit_transform(test_content)
+#test_set_list = np.array(transformed_test)
 test_set_list = DataFrame(transformed_test.A).values.astype(int).tolist()
 
 
@@ -91,10 +94,8 @@ predictions = []
 results = []
 for item in test_set_list:
     # Find neighbors for each element
-
-    neighbors = findNeighbors(train_set_list, item, 7, train_categories, train_id)
+    neighbors = findNeighbors(train_set_list, item, 10, train_categories, train_id)
     # Majority Voting
-
     result = MajorityVoting(neighbors)
     results.append(categories[result])
 predictions = zip(test_id, results)
