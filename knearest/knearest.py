@@ -64,17 +64,17 @@ def MajorityVoting(neighbors):
 
 # Read the train_set
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
-train_content = train_set['Title']
+train_content = train_set['Content']
 # Keep the train_set Categories
 train_categories = train_set['Category']
 train_id = train_set['Id']
 # Read the test_set
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
-test_content = test_set['Title']
+test_content = test_set['Content']
 # Id of the test set
 test_id = test_set['Id']
 
-vectorizer = CountVectorizer(stop_words='english', max_features = 200)
+vectorizer = CountVectorizer(stop_words='english', max_features = 100)
 
 # Train content list of lists
 transformed = vectorizer.fit_transform(train_content)
@@ -93,7 +93,7 @@ predictions = []
 results = []
 for item in test_set_list:
     # Find neighbors for each element
-    neighbors = findNeighbors(train_set_list, item, 10, train_categories, train_id)
+    neighbors = findNeighbors(train_set_list, item, 7, train_categories, train_id)
     # Majority Voting
     result = MajorityVoting(neighbors)
     results.append(categories[result])
