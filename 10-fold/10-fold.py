@@ -84,22 +84,32 @@ for train_indexes, test_indexes in kf.split(train_set):
     categories_test = [train_set_categories[i] for i in test_indexes]
 
     # Pipeline for features_train -> Content of every article
-    vectorizer = CountVectorizer(stop_words='english', max_features=1000)
+    vectorizer = CountVectorizer(stop_words='english', max_features=200)
     features_train_transformed = vectorizer.fit_transform(features_train)
     features_test_transformed = vectorizer.transform(features_test)
 
+    #lsi
+    svd = TruncatedSVD(n_components = 199)
+    features_train_lsi = svd.fit_transform(features_train_transformed)
+    features_test_lsi = svd.transform(features_test_transformed)
+
     # Select only ten from it
     selector = SelectPercentile(f_classif, percentile = 10)
+
     selector.fit(features_train_transformed, categories_train)
     features_train_transformed = selector.transform(features_train_transformed).toarray()
-
-    #print features_train_transformed
     features_test_transformed = selector.transform(features_test_transformed).toarray()
+
+   #Select from the lsi data
+    selector.fit(features_train_lsi, categories_train)
+    features_train_lsi = selector.transform(features_train_lsi)
+    features_test_lsi = selector.transform(features_test_lsi)
+
 
     #print features_test_transformed
     #random_forest
-    random_forest.fit(features_train_transformed, categories_train)
-    prediction = random_forest.predict(features_test_transformed)
+    random_forest.fit(features_train_lsi, categories_train)
+    prediction = random_forest.predict(features_test_lsi)
     rf_acc += accuracy_score(prediction, categories_test)
     rf_precision += precision_score(prediction, categories_test, average="macro")
     rf_recall += recall_score(prediction, categories_test, average="macro")
@@ -116,15 +126,17 @@ for train_indexes, test_indexes in kf.split(train_set):
     mnb_fMeasure += f1_score(prediction, categories_test, average='macro')
     print mnb_acc
     print "MB"
+
     #SVM
-    svm.fit(features_train_transformed, categories_train)
-    prediction = svm.predict(features_test_transformed)
+    svm.fit(features_train_lsi, categories_train)
+    prediction = svm.predict(features_test_lsi)
     svm_acc += accuracy_score(prediction, categories_test)
     svm_precision += precision_score(prediction, categories_test, average="macro")
     svm_recall += recall_score(prediction, categories_test, average="macro")
     svm_fMeasure += f1_score(prediction, categories_test, average='macro')
     print svm_acc
     print "SVM"
+    
 #find the accuracy_score
 rf_acc = rf_acc / 10
 mnb_acc = mnb_acc / 10
