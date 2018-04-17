@@ -67,6 +67,7 @@ parameters = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
                'kernel':['linear','rbf'] }
 """
 
+#We have used the best posible parameters using the parameters above
 parameters = {'C': [100],
               'gamma': [0.0001],
               'kernel':['linear','rbf'] }
@@ -75,7 +76,7 @@ parameters = {'C': [100],
 pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 100)),
+    ('svd', TruncatedSVD(n_components = 200)),
    ('clf', GridSearchCV(svc, parameters)),
 ])
 
