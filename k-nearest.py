@@ -48,7 +48,6 @@ def MajorityVoting(neighbors):
     # Select Neighbors categories
     categories = [0, 0, 0, 0, 0]
     for item in neighbors:
-        print item
         if item[1] == 'Business':
             categories[0] += 1
         elif item[1] == 'Football':
@@ -72,12 +71,13 @@ train_id = train_set['Id']
 # Read the test_set
 test_set = pd.read_csv('test_set.csv', sep="\t", encoding = 'utf8')
 test_content = test_set['Content']
+# Id of the test set
+test_id = test_set['Id']
 
 vectorizer = CountVectorizer(stop_words='english')
 
 # Train content list of lists
-transformed = vectorizer.fit_transform(train_content[:5000])
-print transformed
+transformed = vectorizer.fit_transform(train_content[:3000])
 train_set_list = DataFrame(transformed.A).values.astype(int).tolist()
 
 # Test Content list of lists
@@ -88,15 +88,17 @@ test_set_list = DataFrame(transformed_test.A).values.astype(int).tolist()
 neighbors = []
 categories = ['Business', 'Football', 'Politics', 'Film', 'Technology']
 predictions = []
+results = []
 for item in test_set_list:
     # Find neighbors for each element
+
     neighbors = findNeighbors(train_set_list, item, 7, train_categories, train_id)
     # Majority Voting
 
-    print MajorityVoting(neighbors)
-    predictions.append(zip())
-    #predictions.append(zip(test_set['Id'], MajorityVoting(neighbors)))
-#write_to_csv(predictions)
+    result = MajorityVoting(neighbors)
+    results.append(categories[result])
+predictions = zip(test_id, results)
+write_to_csv(predictions)
 
 
 # Write to csv predicted categories
