@@ -73,9 +73,9 @@ parameters = {'C': [100],
 
 
 pipeline = Pipeline([
-    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS)),
+    ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components = 1000)),
+    ('svd', TruncatedSVD(n_components = 100)),
    ('clf', GridSearchCV(svc, parameters)),
 ])
 
