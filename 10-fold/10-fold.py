@@ -44,7 +44,7 @@ random_forest =  RandomForestClassifier()
 mult_bayes = MultinomialNB(alpha=0.01)
 parameters = {'C': [100],
               'gamma': [0.0001],
-              'kernel':['linear','rbf'] }
+              'kernel':['rbf'] }
 
 svc = svm.SVC()
 svm = GridSearchCV(svc, parameters)
@@ -84,7 +84,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     categories_test = [train_set_categories[i] for i in test_indexes]
 
     # Pipeline for features_train -> Content of every article
-    vectorizer = CountVectorizer(stop_words='english', max_features=200)
+    vectorizer = TfidfVectorizer(stop_words='english')
     features_train_transformed = vectorizer.fit_transform(features_train)
     features_test_transformed = vectorizer.transform(features_test)
 
