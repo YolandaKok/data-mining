@@ -45,9 +45,9 @@ mult_bayes = MultinomialNB(alpha=0.01)
 parameters = {'C': [100],
               'gamma': [0.0001],
               'kernel':['linear','rbf'] }
+
 svc = svm.SVC()
 svm = GridSearchCV(svc, parameters)
-
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 train_set_content = train_set['Content']
@@ -84,7 +84,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     categories_test = [train_set_categories[i] for i in test_indexes]
 
     # Pipeline for features_train -> Content of every article
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = CountVectorizer(stop_words='english', max_features=1000)
     features_train_transformed = vectorizer.fit_transform(features_train)
     features_test_transformed = vectorizer.transform(features_test)
 
@@ -104,6 +104,8 @@ for train_indexes, test_indexes in kf.split(train_set):
     rf_precision += precision_score(prediction, categories_test, average="macro")
     rf_recall += recall_score(prediction, categories_test, average="macro")
     rf_fMeasure += f1_score(prediction, categories_test, average='macro')
+    print rf_acc
+    print "RF"
 
     #MultinomialNB
     mult_bayes.fit(features_train_transformed, categories_train)
@@ -112,7 +114,8 @@ for train_indexes, test_indexes in kf.split(train_set):
     mnb_precision += precision_score(prediction, categories_test, average="macro")
     mnb_recall += recall_score(prediction, categories_test, average="macro")
     mnb_fMeasure += f1_score(prediction, categories_test, average='macro')
-
+    print mnb_acc
+    print "MB"
     #SVM
     svm.fit(features_train_transformed, categories_train)
     prediction = svm.predict(features_test_transformed)
@@ -120,7 +123,8 @@ for train_indexes, test_indexes in kf.split(train_set):
     svm_precision += precision_score(prediction, categories_test, average="macro")
     svm_recall += recall_score(prediction, categories_test, average="macro")
     svm_fMeasure += f1_score(prediction, categories_test, average='macro')
-
+    print svm_acc
+    print "SVM"
 #find the accuracy_score
 rf_acc = rf_acc / 10
 mnb_acc = mnb_acc / 10
