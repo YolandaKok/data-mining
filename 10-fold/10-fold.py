@@ -24,6 +24,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
+from knearest import euclidean_distance
 
 def write_to_csv(acc, precision, recall, fMeasure):
     acc = ['Accuracy'] + acc

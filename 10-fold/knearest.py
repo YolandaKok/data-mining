@@ -64,7 +64,7 @@ def MajorityVoting(neighbors):
     return category_index
 
 # Read the train_set
-train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
+"""train_set = pd.read_csv('train_set.csv', sep="\t", encoding = 'utf8')
 train_content = train_set['Title']
 # Keep the train_set Categories
 train_categories = train_set['Category']
@@ -103,3 +103,4 @@ write_to_csv(predictions)
 
 
 # Write to csv predicted categories
+"""

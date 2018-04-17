@@ -24,25 +24,13 @@ from sklearn.ensemble import RandomForestClassifier
 
 import matplotlib.pyplot as plt
 
-<<<<<<< HEAD:svm/10-fold.py
 random_forest =  RandomForestClassifier()
 
 def kfold_acc(n_components):
     # Main Program
     # Classifier
-
-    #https://stackoverflow.com/questions/46330329/finding-the-values-of-c-and-gamma-to-optimise-svm
-    #You are looking for Hyper-Parameter tuning. In parameter tuning we pass a dictionary containing
-    #a list of possible values for you classifier, then depending on the method that
-    #you choose (i.e. GridSearchCV, RandomSearch, etc.) the best possible parameters are returned.
-
-=======
-def kfold_acc(n_components):
-    # Main Program
-    # Classifier
     clf = RandomForestClassifier()
 
->>>>>>> 1524765af8cc994d925f6ea14961e1ff85e844fd:acc-com/acc-components.py
     train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
     train_set_content = train_set['Content']
     train_set_categories = train_set['Category']
@@ -59,13 +47,10 @@ def kfold_acc(n_components):
         vectorizer = TfidfVectorizer(stop_words='english')
         features_train_transformed = vectorizer.fit_transform(features_train)
         features_test_transformed = vectorizer.transform(features_test)
-<<<<<<< HEAD:svm/10-fold.py
-=======
 
         svd = TruncatedSVD(n_components)
         features_train_transformed = svd.fit_transform(features_train_transformed)
         features_test_transformed = svd.transform(features_test_transformed)
->>>>>>> 1524765af8cc994d925f6ea14961e1ff85e844fd:acc-com/acc-components.py
 
         # Select only ten from it
         selector = SelectPercentile(f_classif, percentile = 10)
@@ -86,15 +71,11 @@ def kfold_acc(n_components):
 
 
 acc = []
-<<<<<<< HEAD:svm/10-fold.py
-n_components = [1, 50, 100, 150, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-=======
-n_components = [10, 20, 50, 100, 150, 200, 500, 600]
->>>>>>> 1524765af8cc994d925f6ea14961e1ff85e844fd:acc-com/acc-components.py
+n_components = [10, 50, 100, 200, 250, 300, 400]
 
 for i in n_components:
     acc.append(kfold_acc(i))
 
 plt.plot(n_components, acc)
-plt.axis([0, 600, 0 , 1])
+plt.axis([0, 500, 0 , 1])
 plt.savefig('foo.png')
