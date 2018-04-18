@@ -1,6 +1,8 @@
 import pandas as pd
-from sklearn import preprocessing
+
 import numpy as np
+
+from sklearn import preprocessing
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction import text
 from sklearn.metrics import classification_report
@@ -10,29 +12,28 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import Normalizer
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.preprocessing import scale
-from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
-import nltk
-from nltk import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
+
 from knearest import euclidean_distance
+
+import nltk
+from nltk.corpus import stopwords
+
 
 def write_to_csv(acc, precision, recall, fMeasure):
     acc = ['Accuracy'] + acc
-    print acc
     precision = ['Precision'] + precision
-    print precision
     recall = ['Recall'] + recall
-    print recall
     fMeasure = ['F-Measure'] + fMeasure
     #Titles of the array
     df = pd.DataFrame([acc, precision, recall, fMeasure],columns=['Statistic Measure', 'Naive Bayes', 'Random Forest', 'SVM'])
@@ -44,7 +45,7 @@ random_forest =  RandomForestClassifier()
 mult_bayes = MultinomialNB(alpha=0.01)
 parameters = {'C': [100],
               'gamma': [0.0001],
-              'kernel':['rbf'] }
+              'kernel':['linear'] }
 
 svc = svm.SVC()
 svm = GridSearchCV(svc, parameters)
@@ -74,69 +75,65 @@ rf_fMeasure = 0
 mnb_fMeasure = 0
 svm_fMeasure = 0
 
+stop_words = stopwords.words('english')
+manual_stop_words = ["said", "say", "want", "one", "know", "two", "see", "something", "also", "says", "get"]
 
 kf = KFold(n_splits=10)
 for train_indexes, test_indexes in kf.split(train_set):
-    #print("TRAIN:", train_indexes, "TEST:", test_indexes)
+    
     features_train = [train_set_content[i] for i in train_indexes]
     features_test = [train_set_content[i] for i in test_indexes]
     categories_train = [train_set_categories[i] for i in train_indexes]
     categories_test = [train_set_categories[i] for i in test_indexes]
 
     # Pipeline for features_train -> Content of every article
-    vectorizer = TfidfVectorizer(stop_words='english')
+    stop_words += manual_stop_words
+    vectorizer = TfidfVectorizer(stop_words=stop_words)
     features_train_transformed = vectorizer.fit_transform(features_train)
     features_test_transformed = vectorizer.transform(features_test)
 
     #lsi
-    svd = TruncatedSVD(n_components = 199)
+    svd = TruncatedSVD(n_components = 200)
     features_train_lsi = svd.fit_transform(features_train_transformed)
     features_test_lsi = svd.transform(features_test_transformed)
-
+    
     # Select only ten from it
     selector = SelectPercentile(f_classif, percentile = 10)
-
-    selector.fit(features_train_transformed, categories_train)
-    features_train_transformed = selector.transform(features_train_transformed).toarray()
-    features_test_transformed = selector.transform(features_test_transformed).toarray()
-
-   #Select from the lsi data
+  
     selector.fit(features_train_lsi, categories_train)
     features_train_lsi = selector.transform(features_train_lsi)
     features_test_lsi = selector.transform(features_test_lsi)
-
-
+    
     #print features_test_transformed
     #random_forest
     random_forest.fit(features_train_lsi, categories_train)
     prediction = random_forest.predict(features_test_lsi)
+
     rf_acc += accuracy_score(prediction, categories_test)
     rf_precision += precision_score(prediction, categories_test, average="macro")
     rf_recall += recall_score(prediction, categories_test, average="macro")
     rf_fMeasure += f1_score(prediction, categories_test, average='macro')
-    print rf_acc
-    print "RF"
+    print("rnd", rf_acc)
 
     #MultinomialNB
     mult_bayes.fit(features_train_transformed, categories_train)
     prediction = mult_bayes.predict(features_test_transformed)
+    
     mnb_acc += accuracy_score(prediction, categories_test)
     mnb_precision += precision_score(prediction, categories_test, average="macro")
     mnb_recall += recall_score(prediction, categories_test, average="macro")
     mnb_fMeasure += f1_score(prediction, categories_test, average='macro')
-    print mnb_acc
-    print "MB"
-
+    print("mnd", mnb_acc)
     #SVM
     svm.fit(features_train_lsi, categories_train)
     prediction = svm.predict(features_test_lsi)
+
     svm_acc += accuracy_score(prediction, categories_test)
     svm_precision += precision_score(prediction, categories_test, average="macro")
     svm_recall += recall_score(prediction, categories_test, average="macro")
     svm_fMeasure += f1_score(prediction, categories_test, average='macro')
-    print svm_acc
-    print "SVM"
-    
+    print("svm", svm_acc)
+
 #find the accuracy_score
 rf_acc = rf_acc / 10
 mnb_acc = mnb_acc / 10
