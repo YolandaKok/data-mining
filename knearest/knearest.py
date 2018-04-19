@@ -11,6 +11,7 @@ from pandas import DataFrame
 from sklearn import preprocessing
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
+import scipy
 
 
 def write_to_csv(predictions):
@@ -19,47 +20,32 @@ def write_to_csv(predictions):
     # Do not include index column
     df.to_csv("testSet_categories.csv", sep="\t", index=False)
 
-# Euclidean Distance
-def euclidean_distance(vector1, vector2):
-    length1 = len(vector1)
-    length2 = len(vector2)
-    # Make vectors have the same length
-    if (length1 > length2):
-        vector1 = vector1[:length2]
-    elif (length2 > length1):
-        vector2 = vector2[:length1]
-
-    distance = 0.0
-    # Calculate the euclidean_distance
-    for i in range(len(vector1)):
-        distance += pow((vector1[i] - vector2[i]), 2)
-    return math.sqrt(distance)
-
 # Find the K nearest neighbors
-def findNeighbors(trainData, testItem, k, categories, ids):
+def findNeighbors(trainData, testData, k, categories, ids):
     # Calculate the nearest neighbors of the training Data
-    distances = []
-    # Calculate distance between every element of the trainData to testItem
-    n = 0
-    for x in trainData:
-        distances.append((euclidean_distance(x, testItem), categories[n], ids[n]))
-        n += 1
-    distances = sorted(distances,  key=lambda x: x[0])[:k]
-    return distances
+    indexes = []
+    for x in testData:
+        # Calculates distances between a test element and all the other elements
+        # of the train set
+        distance = scipy.spatial.distance.cdist(trainData, [x], 'euclidean')
+        # Find the k nearest for the current element
+        index = np.argsort(distance[:, 0])[:k]
+        indexes.append(index)
+    return indexes
 
 def MajorityVoting(neighbors):
     # Select Neighbors categories
     categories = [0, 0, 0, 0, 0]
     for item in neighbors:
-        if item[1] == 'Business':
+        if item == 'Business':
             categories[0] += 1
-        elif item[1] == 'Football':
+        elif item == 'Football':
             categories[1] += 1
-        elif item[1] == 'Politics':
+        elif item == 'Politics':
             categories[2] += 1
-        elif item[1] == 'Film':
+        elif item == 'Film':
             categories[3] += 1
-        elif item[1] == 'Technology':
+        elif item == 'Technology':
             categories[4] += 1
 
     category_index = categories.index(max(categories))
@@ -77,38 +63,32 @@ test_content = test_set['Content']
 # Id of the test set
 test_id = test_set['Id']
 
-
 pipeline = Pipeline([
-    ('vec', CountVectorizer(max_features=4096, stop_words='english')),
+    ('vec', CountVectorizer(max_features=4000, stop_words='english')),
     ('transformer', TfidfTransformer()),
-    ('svd', TruncatedSVD(n_components=40))
+    ('svd', TruncatedSVD(n_components=30))
 ])
-
-#vectorizer = CountVectorizer(stop_words='english', max_features = 100)
 
 # Train content list of lists
 train_set_list = pipeline.fit_transform(train_content)
-#train_set_list = np.array(transformed)
-#print train_set_list
-#train_set_list = DataFrame(transformed).values.astype(int).tolist()
-# Test Content list of lists
 test_set_list = pipeline.fit_transform(test_content)
-#test_set_list = np.array(transformed_test)
-#test_set_list = DataFrame(transformed_test).values.astype(int).tolist()
-
 
 neighbors = []
 categories = ['Business', 'Football', 'Politics', 'Film', 'Technology']
 predictions = []
 results = []
-for item in test_set_list:
-    # Find neighbors for each element
-    neighbors = findNeighbors(train_set_list, item, 7, train_categories, train_id)
-    # Majority Voting
+
+indexes = findNeighbors(train_set_list, test_set_list, 3, train_categories, train_id)
+
+for index in indexes:
+    for item in index:
+        neighbors.append(train_categories[item])
+    # Send list of Categories
+    # MajorityVoting
     result = MajorityVoting(neighbors)
     results.append(categories[result])
+    neighbors = []
+
 predictions = zip(test_id, results)
-write_to_csv(predictions)
-
-
 # Write to csv predicted categories
+write_to_csv(predictions)
