@@ -21,7 +21,7 @@ def write_to_csv(predictions):
     df.to_csv("testSet_categories.csv", sep="\t", index=False)
 
 # Find the K nearest neighbors
-def findNeighbors(trainData, testData, k, categories, ids):
+def findNeighbors(trainData, testData, k):
     # Calculate the nearest neighbors of the training Data
     indexes = []
     for x in testData:
@@ -51,6 +51,27 @@ def MajorityVoting(neighbors):
     category_index = categories.index(max(categories))
     return category_index
 
+# Predict Function
+# Returns list with the predicted categories (Strings)
+def predict(train_set_list, test_set_list, k):
+    neighbors = []
+    categories = ['Business', 'Football', 'Politics', 'Film', 'Technology']
+    predictions = []
+    results = []
+
+    indexes = findNeighbors(train_set_list, test_set_list, k)
+
+    for index in indexes:
+        for item in index:
+            neighbors.append(train_categories[item])
+        # Send list of Categories
+        # MajorityVoting
+        result = MajorityVoting(neighbors)
+        results.append(categories[result])
+        neighbors = []
+
+    return results
+
 # Read the train_set
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 train_content = train_set['Content']
@@ -73,21 +94,7 @@ pipeline = Pipeline([
 train_set_list = pipeline.fit_transform(train_content)
 test_set_list = pipeline.fit_transform(test_content)
 
-neighbors = []
-categories = ['Business', 'Football', 'Politics', 'Film', 'Technology']
-predictions = []
-results = []
-
-indexes = findNeighbors(train_set_list, test_set_list, 3, train_categories, train_id)
-
-for index in indexes:
-    for item in index:
-        neighbors.append(train_categories[item])
-    # Send list of Categories
-    # MajorityVoting
-    result = MajorityVoting(neighbors)
-    results.append(categories[result])
-    neighbors = []
+results = predict(train_set_list, test_set_list, 3)
 
 predictions = zip(test_id, results)
 # Write to csv predicted categories
