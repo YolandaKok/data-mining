@@ -50,7 +50,7 @@ svc = svm.SVC()
 svm = GridSearchCV(svc, parameters)
 
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
-train_set_content = train_set['Content']
+train_set_content = train_set['Content'] + 2 * train_set['Title']
 train_set_categories = train_set['Category']
 
 acc = []
@@ -128,6 +128,7 @@ for train_indexes, test_indexes in kf.split(train_set):
     mnb_recall += recall_score(prediction, categories_test, average="macro")
     mnb_fMeasure += f1_score(prediction, categories_test, average='macro')
     print("mnd", mnb_acc)
+
     #SVM
     svm.fit(features_train_lsi, categories_train)
     prediction = svm.predict(features_test_lsi)
@@ -139,7 +140,6 @@ for train_indexes, test_indexes in kf.split(train_set):
     print("svm", svm_acc)
 
     # KNN
-
     prediction = predict(features_train_lsi, features_test_lsi, 5, categories_train)
 
     knn_acc += accuracy_score(prediction, categories_test)

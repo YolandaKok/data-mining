@@ -46,7 +46,8 @@ def write_to_csv(predictions):
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
 
-train_content = train_set['Content']
+train_content = train_set['Content'] + 2 * train_set['Title']
+test_content = test_set['Content'] + 2 * test_set['Title']
 
 # Preprocess data
 sentences = preprocess(train_content)

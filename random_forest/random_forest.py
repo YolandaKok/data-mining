@@ -1,7 +1,8 @@
 import pandas as pd
-from sklearn import preprocessing
+
 import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
+
+from sklearn import preprocessing
 from sklearn.feature_extraction import text
 from sklearn.metrics import classification_report
 from sklearn.ensemble import RandomForestClassifier
@@ -12,11 +13,12 @@ from sklearn.preprocessing import scale
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import accuracy_score
-import nltk
-from nltk import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from sklearn.metrics import accuracy_score
+
+import nltk
+from nltk import PorterStemmer
 
 # Preprocess Data
 # Stemming
@@ -43,7 +45,10 @@ def write_to_csv(predictions):
 # Main Program
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
-train_content = train_set['Content']
+
+train_content = train_set['Content'] + 2 * train_set['Title']
+test_content = test_set['Content'] + 2 * test_set['Title']
+
 
 # Preprocess data
 sentences = preprocess(train_content)
@@ -63,9 +68,12 @@ pipeline = Pipeline([
 ])
 
 predicted = pipeline.fit(sentences, y_train)
+
 # Now evaluate all steps on test set and predict
-predicted = pipeline.predict(test_set['Content'])
+predicted = pipeline.predict(test_content)
+
 predicted_categories = le.inverse_transform(predicted)
 predictions = zip(test_set['Id'], predicted_categories)
+
 # write to csv
 write_to_csv(predictions)
