@@ -32,7 +32,7 @@ def kfold_acc(n_components):
     clf = RandomForestClassifier()
 
     train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
-    train_set_content = train_set['Content']
+    train_set_content = train_set['Content'] + 2 * train_set['Title']
     train_set_categories = train_set['Category']
 
     kf = KFold(n_splits=10)
