@@ -42,6 +42,7 @@ def write_to_csv(predictions):
 
 # Main Program
 train_set = pd.read_csv('../train_set.csv', sep="\t", encoding = 'utf8')
+#train_set = train_set.head(100)
 test_set = pd.read_csv('../test_set.csv', sep="\t", encoding = 'utf8')
 train_content = train_set['Content']
 
@@ -51,6 +52,10 @@ sentences = preprocess(train_content)
 # Label Encoding for the categories
 le = preprocessing.LabelEncoder()
 y_train = le.fit_transform(train_set["Category"])
+train_categories = train_set['Category']
+
+# Split train data and test data the train_set
+X_train, X_test, y_train, y_test = train_test_split(train_content, train_categories, test_size=0.33, random_state=42)
 
 # Use a pipeline
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
@@ -59,9 +64,14 @@ pipeline = Pipeline([
     ('vect', CountVectorizer(stop_words=text.ENGLISH_STOP_WORDS, max_features = 2000)),
     ('tfidf', TfidfTransformer()),
     ('svd', TruncatedSVD(n_components = 200)),
-    ('clf', RandomForestClassifier()),
+    ('clf', RandomForestClassifier(n_estimators = 20)),
 ])
 
+# See the accuracy
+pipeline.fit(X_train, y_train)
+pred = pipeline.predict(X_test)
+
+print accuracy_score(pred, y_test)
 predicted = pipeline.fit(sentences, y_train)
 # Now evaluate all steps on test set and predict
 predicted = pipeline.predict(test_set['Content'])
