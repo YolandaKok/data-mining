@@ -60,7 +60,7 @@ y_train = le.fit_transform(train_set["Category"])
 train_categories = train_set['Category']
 
 # Split train data and test data the train_set
-X_train, X_test, y_train, y_test = train_test_split(train_content, train_categories, test_size=0.33, random_state=42)
+X_train, X_test, y_train2, y_test = train_test_split(train_content, train_categories, test_size=0.33, random_state=42)
 
 # Use a pipeline
 # Transformer in scikit-learn - some class that have fit and transform method, or fit_transform method.
@@ -73,12 +73,12 @@ pipeline = Pipeline([
 ])
 
 # See the accuracy
-pipeline.fit(X_train, y_train)
+pipeline.fit(X_train, y_train2)
 pred = pipeline.predict(X_test)
 
 print accuracy_score(pred, y_test)
-predicted = pipeline.fit(sentences, y_train)
 
+predicted = pipeline.fit(sentences, y_train)
 # Now evaluate all steps on test set and predict
 predicted = pipeline.predict(test_content)
 
